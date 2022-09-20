@@ -317,6 +317,15 @@ class ASoC:
             print("Error retrieving Scans with V1 Presences associated.  Status code = " + str(resp.status_code))
             return None       
 
+    def updateScanPresence(self,scan_id,pres_id):
+        headers = {"Accept":"application/json","Authorization": "Bearer "+self.auth_token}
+        data = {"PresenceId":pres_id}
+        resp = requests.put("https://cloud.appscan.com/api/v2/Scans/"+scan_id,headers=headers,data=json.dumps(data))
+
+        if(resp.status_code == 204):
+            print("Scan successfully updated. " + resp.text)
+        else:
+            print("Error updating scan " + scan_id + " .  Status code = " + str(resp.status_code))      
 
     def getScanIssues(self,scan_exe_id):
         headers = {

@@ -21,6 +21,9 @@ if code != 200:
 starttime = time.time()
 print(f'--updateScanPresence.py started: {starttime}--')
 
-#scanids = asoc.getActivePresences()
+active_presence = asoc.getActivePresences()
 scanids = asoc.getV1PresenceScans()
-print(scanids)
+for(scans in scanids):
+	asoc.updateScanPresence(scan_id,active_presence)
+endtime = time.time()
+print(f'--updateScanPresence.py ended: {endtime}--')
