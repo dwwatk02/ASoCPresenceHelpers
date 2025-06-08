@@ -6,6 +6,7 @@ import json
 import csv
 import shutil
 from extract import json_extract
+from security import safe_requests
 
 """
 This class should contain wrapper functions around the ASOC API
@@ -63,7 +64,7 @@ class ASoC:
     
     def getRunningDASTScans(self):
         #r = requests.get('https://cloud.appscan.com/api/v2/Scans?%24filter=IsCompleted%20eq%20false%20and%20Technology%20eq%20\'DynamicAnalyzer\'' ,headers=self.session.headers)
-        r = requests.get('https://cloud.appscan.com/api/v2/Scans?%24filter=Technology%20eq%20\'DynamicAnalyzer\'' ,headers=self.session.headers)
+        r = safe_requests.get('https://cloud.appscan.com/api/v2/Scans?%24filter=Technology%20eq%20\'DynamicAnalyzer\'' ,headers=self.session.headers)
         #r = requests.get('https://cloud.appscan.com/api/v2/Scans/CountByUser',  headers=self.session.headers)
         count = 0
         if r.status_code == 200:
@@ -186,7 +187,7 @@ class ASoC:
             "Accept": "application/json",
             "Authorization": "Bearer "+self.auth_token
         }
-        resp = requests.get("https://cloud.appscan.com/api/V2/Account/TenantInfo", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Account/TenantInfo", headers=headers)
         return resp.status_code == 200
 
     def getApplication(self, id):
@@ -195,7 +196,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
         
-        resp = requests.get("https://cloud.appscan.com/api/V2/Apps/"+id, headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Apps/"+id, headers=headers)
         
         if(resp.status_code == 200):
             return resp.json()
@@ -210,7 +211,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
         
-        resp = requests.get("https://cloud.appscan.com/api/V2/Scans/"+scan_id, headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Scans/"+scan_id, headers=headers)
         
         if(resp.status_code == 200):
             result = resp.json()['AppId']
@@ -227,7 +228,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
         
-        resp = requests.get("https://cloud.appscan.com/api/V2/Apps/", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Apps/", headers=headers)
         
         if(resp.status_code == 200):
             file1 = open('asoc_applications.json', 'w')
@@ -246,7 +247,7 @@ class ASoC:
         }
         
         #resp = requests.get("https://cloud.appscan.com/api/V2/Apps/?$select=Id%2CName", headers=headers)
-        resp = requests.get("https://cloud.appscan.com/api/V2/Apps/", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Apps/", headers=headers)
         
         if(resp.status_code == 200):
             #file1 = open('asoc_applications.json', 'w')
@@ -264,7 +265,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
 
-        resp = requests.get("https://cloud.appscan.com/api/v2/Scans/GetAsPage?%24inlinecount=allpages", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Scans/GetAsPage?%24inlinecount=allpages", headers=headers)
         
         if(resp.status_code == 200):
             return resp.json()
@@ -279,7 +280,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
 
-        resp = requests.get("https://cloud.appscan.com/api/v2/FixGroups/Application/"+app_id+"?$filter=IssueTypeId%20eq%20'OpenSource'&$select=File%2CSeverity", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/FixGroups/Application/"+app_id+"?$filter=IssueTypeId%20eq%20'OpenSource'&$select=File%2CSeverity", headers=headers)
         
         if(resp.status_code == 200):
 
@@ -293,7 +294,7 @@ class ASoC:
     def getV1PresenceScans(self):
         headers = {"Accept":"application/json","Authorization": "Bearer "+self.auth_token}
 
-        resp = requests.get("https://cloud.appscan.com/api/v2/Scans/GetAsPage?%24filter=Presence%2FIsV2%20eq%20false&%24select=Id&inlinecount=allpages",headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Scans/GetAsPage?%24filter=Presence%2FIsV2%20eq%20false&%24select=Id&inlinecount=allpages",headers=headers)
 
         if(resp.status_code == 200):
             result = resp.json()['Items']
@@ -307,7 +308,7 @@ class ASoC:
     def getActivePresences(self):
         headers = {"Accept":"application/json","Authorization": "Bearer "+self.auth_token}
 
-        resp = requests.get("https://cloud.appscan.com/api/v2/Presences?%24filter=IsV2%20eq%20true%20and%20Status%20eq%20\'Active\'&%24select=Id&inlinecount=allpages",headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Presences?%24filter=IsV2%20eq%20true%20and%20Status%20eq%20\'Active\'&%24select=Id&inlinecount=allpages",headers=headers)
 
         if(resp.status_code == 200):
             print(resp.json())
@@ -334,7 +335,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
 
-        resp = requests.get("https://cloud.appscan.com/api/v2/Issues/Scan/"+scan_exe_id+"?top=1&select=Id%2CLocation%2CIssueTypeId%2CHost%2CSeverity%2CStatus%2CIssueType%2CDateCreated%2CLastUpdated%2CDiscoveryMethod%2CScanName%2CApplicationId%2CCwe", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Issues/Scan/"+scan_exe_id+"?top=1&select=Id%2CLocation%2CIssueTypeId%2CHost%2CSeverity%2CStatus%2CIssueType%2CDateCreated%2CLastUpdated%2CDiscoveryMethod%2CScanName%2CApplicationId%2CCwe", headers=headers)
         
         if(resp.status_code == 200):
             result = resp.json()
@@ -351,7 +352,7 @@ class ASoC:
         }
 
         #resp = requests.get("https://cloud.appscan.com/api/v2/Scans?top=100&$select=LastModified%2CLastSuccessfulExecution", headers=headers)
-        resp = requests.get("https://cloud.appscan.com/api/v2/Scans?top=1&$select=Id", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Scans?top=1&$select=Id", headers=headers)
         if(resp.status_code == 200):
             return resp.json()
         else:
@@ -370,7 +371,7 @@ class ASoC:
             "Authorization": "Bearer "+self.auth_token
         }
         
-        resp = requests.get(asoc_url+id, headers=headers)
+        resp = safe_requests.get(asoc_url+id, headers=headers)
         
         if(resp.status_code == 200):
             return resp.json()
@@ -408,7 +409,7 @@ class ASoC:
             "Accept": "application/json",
             "Authorization": "Bearer "+self.auth_token
         }
-        resp = requests.get("https://cloud.appscan.com/api/V2/Reports/"+reportId, headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Reports/"+reportId, headers=headers)
         if(resp.status_code == 200):
             return resp.json()["Status"]
         else:
@@ -430,7 +431,7 @@ class ASoC:
             "Accept": "application/json",
             "Authorization": "Bearer "+self.auth_token
         }
-        resp = requests.get("https://cloud.appscan.com/api/v2/Reports/Download/"+reportId, headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/v2/Reports/Download/"+reportId, headers=headers)
         if(resp.status_code==200):
             report_bytes = resp.content
             with open(fullPath, "wb") as f:
@@ -446,7 +447,7 @@ class ASoC:
             "Accept": "application/json",
             "Authorization": "Bearer "+self.auth_token
         }
-        resp = requests.get("https://cloud.appscan.com/api/V2/Webhooks", headers=headers)
+        resp = safe_requests.get("https://cloud.appscan.com/api/V2/Webhooks", headers=headers)
         if(resp.status_code==200):
             return resp.json()
         else:
